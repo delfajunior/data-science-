@@ -1,0 +1,135 @@
+```{r}
+#linear regression
+linear=read.csv('forestfires.csv')
+linear
+```
+```{r}
+input1<-linear$wind[100:200]
+input2<-linear$rain[100:200]
+output<-linear$area[100:200]
+```
+
+```{r}
+# Create the feature matrix (X) with only 'wind' and 'rain'
+X <- as.matrix(linear[, c("wind", "rain")])
+
+# Create the target vector (y)
+y <- as.matrix(linear$area)
+
+# Define the cost function
+costfunction <- function(X, y, theta = matrix(0, ncol = 1, nrow = ncol(X) + 1)) {
+  m <- length(y)  # Number of training examples
+  X_extend <- cbind(1, X)  # Add a column of ones for the intercept term
+  h <- X_extend %*% theta  # Predicted values
+  j <- sum((h - y)^2) / (2 * m)  # Cost function
+  return(j)  # Return the cost
+}
+
+# Initial parameters (theta) for two features plus intercept
+theta <- matrix(rep(0, ncol(X) + 1), ncol = 1)  # Adjust size based on number of features
+
+# Calculate the cost
+cost <- costfunction(X, y, theta)
+print(cost)
+```
+
+```{r}
+gradientdescent <- function(X, y, theta = matrix(0, ncol = 1, nrow = ncol(X) + 1), alpha = 0.01, num_iters = 1500) {
+  m <- length(y)  # Number of training examples
+  X_extend <- cbind(1, X)  # Add a column of ones for the intercept term
+  j_history <- numeric(num_iters)  # To store the cost at each iteration
+  
+  for (i in 1:num_iters) {
+    h <- X_extend %*% theta  # Predicted values
+    error <- h - y  # Error vector
+    
+    # Gradient computation
+    gradient <- (t(X_extend) %*% error) / m  # Gradient calculation
+    theta <- theta - alpha * gradient  # Update theta
+    
+    # Cost function
+    j_history[i] <- sum((h - y)^2) / (2 * m)  # Store cost
+  }
+  
+  return(list(theta = theta, j_history = j_history))  # Return updated theta and cost history
+}
+```
+
+```{r}
+result <- gradientdescent(X, y)
+theta <- result$theta
+j_history <- result$j_history
+```
+
+```{r}
+theta
+```
+```{r}
+theta_p <- matrix(c(0.6533892, -1.3611833), nrow = 1)
+theta_p
+```
+
+```{r}
+p= 10.0985456+0.6533892* 4+ -1.361183*6
+print(p)
+```
+
+
+
+
+
+
+```{r} 
+#logistic regression
+```
+```{r}
+logistic=read.csv('diabetes_dataset (1).csv')
+logistic
+```
+```{r}
+input1<-logistic$BMI[100:200]
+input2<-logistic$Waist_Circumference[100:200]
+output<-logistic$Previous_Gestational_Diabetes[100:200]
+```
+
+```{r}
+X_l<- as.matrix(logistic[, c("BMI", "Waist_Circumference")])
+```
+
+```{r}
+y_l <- as.matrix(logistic$Previous_Gestational_Diabetes)
+```
+
+```{r}
+X_l<- cbind(1, X_l)
+```
+
+
+```{r}
+# Sigmoid function
+sigmoid <- function(z) {
+  return(1 / (1 + exp(-z)))
+}
+
+costFunction_l <- function(X, y, theta = c(0, 0, 0)) {
+  theta <- matrix(theta, ncol = 1)  # Ensure theta is column vector
+  m <- length(y)  # Number of training examples
+  h_prime <- X %*% theta
+  h <- sigmoid(h_prime)  # Hypothesis using sigmoid
+  j <- (-1 / m) * (t(log(h)) %*% y + t(log(1 - h)) %*% (1 - y))
+  return(as.numeric(j))  # Return cost as a numeric scalar
+}
+```
+
+
+```{r}
+costFunction_l(X_l,y_l)
+```
+```{r}
+theta_l=gradientDescent_l(X_l, y_l)
+theta_l
+```
+
+
+
+
